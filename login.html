@@ -1,0 +1,45 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Secure GitHub Login</title>
+<!-- styles omitted for brevity -->
+</head>
+<body>
+
+<div class="login-container">
+  <h2>GitHub Login</h2>
+  <input type="text" id="username" placeholder="Enter GitHub username" />
+  <button onclick="login()">Login</button>
+  <div id="message"></div>
+</div>
+
+<script>
+  async function login() {
+    const username = document.getElementById("username").value.trim();
+    const messageDiv = document.getElementById("message");
+    
+    // Send username to server for validation
+    const response = await fetch('/api/validate-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    });
+    const data = await response.json();
+    
+    if (data.authorized) {
+      // Save access
+      sessionStorage.setItem("hasAccess", "true");
+      sessionStorage.setItem("username", username);
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+    } else {
+      messageDiv.textContent = "Access denied. Unauthorized user.";
+    }
+  }
+</script>
+
+</body>
+</html>
